@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação de Membros</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #3e1d15;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: #f4e1d2;
+        }
+
+        .nav-custom {
+            background-color: #2b0c04;
+            color: white;
+            padding: 0.25rem 1rem;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .nav-link-custom {
+            color: white;
+        }
+
+        .nav-link-custom:hover {
+            color: #d4a373;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .btn-custom {
+            background-color: #2b0c04;
+            color: white;
+            border: none;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .btn-custom:hover {
+            background-color: #f4e1d2;
+            color: #2b0c04;
+        }
+
+        .container-custom {
+            margin-top: 80px;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            background-color: #4e2a1d;
+            color: #f4e1d2;
+            border: 1px solid #3e1d15;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .form-control:focus {
+            background-color: #6a3820;
+            border-color: #d4a373;
+        }
+
+        .alert {
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container-custom {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid px-0">
+        <div class="w-100 nav-custom">
+            <p class="company-name mb-0">Móveis Pica-pau</p>
+            <ul class="nav justify-content-center mb-0">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-custom" href="index.html">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-custom" href="avaliacaoMembro.html">Avaliação</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-custom" href="lider.html">Criar equipes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-custom" href="addMembros.html">Adicionar membros a equipe</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container container-custom">
+        <h1>Avaliação de Membros</h1>
+        <form id="avaliacaoForm">
+            <div class="form-group">
+                <label for="membro_id">ID do Membro:</label>
+                <input type="number" class="form-control" id="membro_id" required>
+            </div>
+            <div class="form-group">
+                <label for="assiduidade">Assiduidade (0 a 5):</label>
+                <input type="number" class="form-control" id="assiduidade" min="0" max="5" required>
+            </div>
+            <div class="form-group">
+                <label for="comprometimento">Comprometimento (0 a 5):</label>
+                <input type="number" class="form-control" id="comprometimento" min="0" max="5" required>
+            </div>
+            <div class="form-group">
+                <label for="cuidado">Cuidado (0 a 5):</label>
+                <input type="number" class="form-control" id="cuidado" min="0" max="5" required>
+            </div>
+            <div class="form-group">
+                <label for="colaboracao">Colaboração (0 a 5):</label>
+                <input type="number" class="form-control" id="colaboracao" min="0" max="5" required>
+            </div>
+            <button type="submit" class="btn btn-custom btn-block">Enviar Avaliação</button>
+        </form>
+
+        <div id="resultado" class="mt-4"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.getElementById('avaliacaoForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const membro_id = document.getElementById('membro_id').value;
+            const assiduidade = document.getElementById('assiduidade').value;
+            const comprometimento = document.getElementById('comprometimento').value;
+            const cuidado = document.getElementById('cuidado').value;
+            const colaboracao = document.getElementById('colaboracao').value;
+
+            const avaliacaoData = {
+                membro_id: parseInt(membro_id),
+                assiduidade: parseFloat(assiduidade),
+                comprometimento: parseFloat(comprometimento),
+                cuidado: parseFloat(cuidado),
+                colaboracao: parseFloat(colaboracao)
+            };
+
+            try {
+                const response = await fetch('https://backrh.vercel.app/api/avaliacoes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(avaliacaoData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro: ${response.status}`);
+                }
+
+                const result = await response.json();
+                document.getElementById('resultado').innerHTML = `<div class="alert alert-success">Avaliação enviada com sucesso! ID: ${result.id}, Nota: ${result.nota}</div>`;
+            } catch (error) {
+                document.getElementById('resultado').innerHTML = `<div class="alert alert-danger">Falha ao enviar a avaliação: ${error.message}</div>`;
+            }
+        });
+    </script>
+</body>
+
+</html>
